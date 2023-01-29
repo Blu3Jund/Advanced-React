@@ -14,7 +14,7 @@ import { sendPasswordResetEmail } from './lib/mail';
 function check(name: string) {}
 
 const databaseURL =
-  process.env.DATABASE_URL || 'mongodb://localhost/keystone-sick-fits-tutorial';
+  process.env.DATABASE_URL || 'mongodb://localhost/keystone-doblue-tutorial';
 
 const sessionConfig = {
   maxAge: 60 * 60 * 24 * 360, // How long they stay signed in?

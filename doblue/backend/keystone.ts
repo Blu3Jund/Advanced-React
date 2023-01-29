@@ -1,20 +1,16 @@
-import { createAuth } from '@keystone-next/auth';
+import 'dotenv/config.js';
 import { config, createSchema } from '@keystone-next/keystone/schema';
-import {
-  withItemData,
-  statelessSessions,
-} from '@keystone-next/keystone/session';
-import { ProductImage } from './schemas/ProductImage';
-import { Product } from './schemas/Product';
+import { createAuth } from '@keystone-next/auth';
+import { statelessSessions, withItemData } from '@keystone-next/keystone/session';
 import { User } from './schemas/User';
-import 'dotenv/config';
+import { Product } from './schemas/Product';
+import { ProductImage } from './schemas/ProductImage';
 import { insertSeedData } from './seed-data';
 
-const databaseURL =
-  process.env.DATABASE_URL || 'mongodb://localhost/keystone-doblue-tutorial';
+const databaseURL = process.env.DATABASE_URL || 'mongodb://localhost/keystone-do-blue';
 
 const sessionConfig = {
-  maxAge: 60 * 60 * 24 * 360, // How long they stay signed in?
+  maxAge: 60 * 60 * 24 * 360, // how long should the user stay signed in?
   secret: process.env.COOKIE_SECRET,
 };
 
@@ -24,18 +20,12 @@ const { withAuth } = createAuth({
   secretField: 'password',
   initFirstItem: {
     fields: ['name', 'email', 'password'],
-    // TODO: Add in inital roles here
-  },
-  passwordResetLink: {
-    async sendToken(args) {
-      console.log(args);
-    },
+    // TODO: Add initial roles here
   },
 });
 
 export default withAuth(
   config({
-    // @ts-ignore
     server: {
       cors: {
         origin: [process.env.FRONTEND_URL],
@@ -46,7 +36,7 @@ export default withAuth(
       adapter: 'mongoose',
       url: databaseURL,
       async onConnect(keystone) {
-        console.log('Connected to the database!');
+        console.log('Connected to the database');
         if (process.argv.includes('--seed-data')) {
           await insertSeedData(keystone);
         }
@@ -59,14 +49,12 @@ export default withAuth(
       ProductImage,
     }),
     ui: {
-      // Show the UI only for poeple who pass this test
-      isAccessAllowed: ({ session }) =>
-        // console.log(session);
-        !!session?.data,
+      // Show the UI only for people who pass this test
+      isAccessAllowed: ({ session }) => !!session?.data,
     },
     session: withItemData(statelessSessions(sessionConfig), {
-      // GraphQL Query
+      // Graphql Query
       User: 'id name email',
     }),
-  })
+  }),
 );
