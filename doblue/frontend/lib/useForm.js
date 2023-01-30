@@ -1,8 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function useForm(initial = {}) {
   // create a state object for our inputs
   const [inputs, setInputs] = useState(initial);
+  const initialValues = Object.values(initial).join('');
+
+  useEffect(() => {
+    // This function runs when the things we are watching change
+    setInputs(initial);
+  }, [initialValues]);
+
   function handleChange(e) {
     let { value, name, type } = e.target;
     if (type === 'number') {
@@ -22,9 +29,7 @@ export default function useForm(initial = {}) {
   }
 
   function clearForm() {
-    const blackState = Object.fromEntries(
-      Object.entries(inputs).map(([key, value]) => [key, ''])
-    );
+    const blackState = Object.fromEntries(Object.entries(inputs).map(([key, value]) => [key, '']));
     setInputs(blackState);
   }
 
