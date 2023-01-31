@@ -1,13 +1,18 @@
 import 'dotenv/config.js';
 import { config, createSchema } from '@keystone-next/keystone/schema';
 import { createAuth } from '@keystone-next/auth';
-import { statelessSessions, withItemData } from '@keystone-next/keystone/session';
+import {
+  statelessSessions,
+  withItemData,
+} from '@keystone-next/keystone/session';
 import { User } from './schemas/User';
 import { Product } from './schemas/Product';
 import { ProductImage } from './schemas/ProductImage';
 import { insertSeedData } from './seed-data';
+import { sendPasswordResetEmail } from './lib/mail';
 
-const databaseURL = process.env.DATABASE_URL || 'mongodb://localhost/keystone-do-blue';
+const databaseURL =
+  process.env.DATABASE_URL || 'mongodb://localhost/keystone-do-blue';
 
 const sessionConfig = {
   maxAge: 60 * 60 * 24 * 360, // how long should the user stay signed in?
@@ -21,6 +26,12 @@ const { withAuth } = createAuth({
   initFirstItem: {
     fields: ['name', 'email', 'password'],
     // TODO: Add initial roles here
+  },
+  passwordResetLink: {
+    async sendToken(args) {
+      // send the email
+      await sendPasswordResetEmail(args.token, args.identity);
+    },
   },
 });
 
@@ -56,5 +67,5 @@ export default withAuth(
       // Graphql Query
       User: 'id name email',
     }),
-  }),
+  })
 );
