@@ -1,10 +1,11 @@
 import { PAGINATION_QUERY } from '../components/Pagination';
 
+// There are multiple console.log()'s in this file. Uncomment them for Cache debugging
 export default function paginationField() {
   return {
     keyArgs: false, // tells apollo we will take care of everything
     read(existing = [], { args, cache }) {
-      console.log({ existing, args, cache });
+      // console.log({ existing, args, cache });
       const { skip, first } = args;
 
       // Read the number of items on the page from the cache
@@ -30,9 +31,9 @@ export default function paginationField() {
 
       // If there are items, jsut return them from the cache and we don't need to go to the network
       if (items.length) {
-        console.log(
-          `There are ${items.length} items in the cache! Going to send them to Apollo`
-        );
+        // console.log(
+        //   `There are ${items.length} items in the cache! Going to send them to Apollo`
+        // );
         return items;
       }
 
@@ -45,12 +46,12 @@ export default function paginationField() {
     merge(existing, incoming, { args }) {
       const { skip, first } = args;
       // This runs when the Apollo client comes back from the network with our product
-      console.log(`Merging items from the network ${incoming.length}`);
+      // console.log(`Merging items from the network ${incoming.length}`);
       const merged = existing ? existing.slice(0) : [];
       for (let i = skip; i < skip + incoming.length; ++i) {
         merged[i] = incoming[i - skip];
       }
-      console.log(merged);
+      // console.log(merged);
       // Finally we return the merged items from the cache,
       return merged; // After the merge function is executed read gets executed
     },

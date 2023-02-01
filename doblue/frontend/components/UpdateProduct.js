@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import { useMutation, useQuery } from '@apollo/client';
-import Form from './styles/Form';
 import { Router } from 'next/router';
+import Form from './styles/Form';
 import DisplayError from './ErrorMessage';
 import useForm from '../lib/useForm';
 
@@ -17,8 +17,16 @@ const SINGLE_PRODUCT_QUERY = gql`
 `;
 
 const UPDATE_PRODUCT_MUTATION = gql`
-  mutation UPDATE_PRODUCT_MUTATION($id: ID!, $name: String, $description: String, $price: Int) {
-    updateProduct(id: $id, data: { name: $name, description: $description, price: $price }) {
+  mutation UPDATE_PRODUCT_MUTATION(
+    $id: ID!
+    $name: String
+    $description: String
+    $price: Int
+  ) {
+    updateProduct(
+      id: $id
+      data: { name: $name, description: $description, price: $price }
+    ) {
       id
       name
       description
@@ -56,7 +64,6 @@ export default function UpdateProduct({ id }) {
             price: inputs.price,
           },
         }).catch(console.error);
-        console.log(res);
         // // Submit the inputfields to the backend:
         // TODO: Handle submit
         // await createProduct();
