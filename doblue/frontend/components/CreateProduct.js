@@ -37,21 +37,24 @@ export default function CreateProduct() {
     price: 0,
     description: '',
   });
-  const [createProduct, { loading, error, data }] = useMutation(CREATE_PRODUCT_MUTATION, {
-    variables: inputs,
-    refetchQueries: [{ query: ALL_PRODUCTS_QUERY }],
-  });
+  const [createProduct, { loading, error, data }] = useMutation(
+    CREATE_PRODUCT_MUTATION,
+    {
+      variables: inputs,
+      refetchQueries: [{ query: ALL_PRODUCTS_QUERY }],
+    }
+  );
   return (
     <Form
       onSubmit={async (e) => {
         e.preventDefault();
         // Submit the inputfields to the backend:
-        await createProduct();
+        const res = await createProduct();
         clearForm();
 
         // Go to that products page
         Router.push({
-          pathname: `/product/${data.createProduct.id}`,
+          pathname: `/product/${res.data.createProduct.id}`,
         });
       }}
     >
@@ -59,7 +62,13 @@ export default function CreateProduct() {
       <fieldset disabled={loading} aria-busy={loading}>
         <label htmlFor="image">
           Image
-          <input required type="file" id="image" name="image" onChange={handleChange} />
+          <input
+            required
+            type="file"
+            id="image"
+            name="image"
+            onChange={handleChange}
+          />
         </label>
         <label htmlFor="name">
           Name
@@ -98,3 +107,5 @@ export default function CreateProduct() {
     </Form>
   );
 }
+
+export { CREATE_PRODUCT_MUTATION };
